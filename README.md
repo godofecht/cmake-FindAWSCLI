@@ -82,10 +82,39 @@ This example:
 
 ---
 
-## Troubleshooting
+## Importing into your project
 
-1. **AWS CLI Install Fails**:  
-   Verify you have network connectivity and appropriate permissions (e.g., `sudo` for Linux/macOS).
-   
-2. **S3 Download Errors**:  
-   Ensure the bucket and object key are correct and that your AWS credentials have the necessary permissions to access the bucket.
+# Using FetchContent to Add `FindAWSCLI.cmake` to Your Project
+
+1. Add the following to your `CMakeLists.txt`:
+
+   ```cmake
+   include(FetchContent)
+
+   FetchContent_Declare(
+       FindAWSCLI
+       GIT_REPOSITORY https://github.com/your-username/cmake-find-awscli.git
+       GIT_TAG main # Or a specific commit hash, branch, or tag
+   )
+
+   FetchContent_MakeAvailable(FindAWSCLI)
+
+   list(APPEND CMAKE_MODULE_PATH ${findawscli_SOURCE_DIR})
+
+   find_package(AWSCLI REQUIRED)
+
+   if(AWSCLI_FOUND)
+       message(STATUS "AWS CLI found at: ${AWSCLI_EXECUTABLE}")
+       message(STATUS "AWS CLI version: ${AWSCLI_VERSION}")
+   else()
+       message(FATAL_ERROR "AWS CLI is required but not available.")
+   endif()
+   ```
+
+2. Structure your repository to include `FindAWSCLI.cmake` at the root of your GitHub repository.
+
+3. FetchContent will automatically pull the module when you configure your project.
+
+4. Use `find_package(AWSCLI REQUIRED)` and `awscli_download_from_s3` as usual in your CMake configuration.
+
+```
